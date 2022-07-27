@@ -22,8 +22,70 @@
     <script type="text/javascript">
 
         $(function () {
+            //给“创建”按钮添加点击事件
+            $("#createActivityBtn").click(function () {
+                //弹出创建市场活动的模态窗口
+                $("#createActivityModal").modal("show");
+            })
 
+            //给保存按钮添加点击事件
+            $("#saveCreateActivityBtn").click(function () {
+                //收集参数
+                var owner = $("#create-marketActivityOwner").val();
+                var name = $.trim($("#create-marketActivityName").val());
+                var startDate = $("#create-startDate").val();
+                var endDate = $("#create-endDate").val();
+                var cost = $.trim($("#create-cost").val());
+                var describe = $.trim($("#create-describe").val());
+                //表单验证
+                if (owner == "") {
+                    alert("所有者不能为空！");
+                    return;
+                }
+                if (name == "") {
+                    alert("名称不能为空！");
+                    return;
+                }
+                if (startDate == "" || endDate == "") {
+                    alert("日期不能为空！");
+                    return;
+                } else if (endDate < startDate) {
+                    alert("结束日期不能小于开始日期！");
+                    return;
+                }
 
+                var regExp = /^(([1-9]\d*)|0)$/;
+                if (!regExp.test(cost)) {
+                    alert("成本只能为非负整数！")
+                    return;
+                }
+
+                //发送请求
+                $.ajax({
+                    url: "workbench/activity/saveCreateActivity.do",
+                    data: {
+                        owner,
+                        name,
+                        startDate,
+                        endDate,
+                        cost,
+                        describe
+                    },
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == "1") {
+                            //关闭模态窗口
+                            $("#createActivityModal").modal("hide");
+                            //刷新市场活动列，显示第一页数据，保持每页显示条数不变
+                        } else {
+                            alert(data.message)
+                            $("#createActivityModal").modal("show");
+                        }
+                    },
+                })
+
+            })
         });
 
     </script>
@@ -62,13 +124,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
+                        <label for="create-startDate" class="col-sm-2 control-label">开始日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-startTime">
+                            <input type="text" class="form-control" id="create-startDate">
                         </div>
-                        <label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
+                        <label for="create-endDate" class="col-sm-2 control-label">结束日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-endTime">
+                            <input type="text" class="form-control" id="create-endDate">
                         </div>
                     </div>
                     <div class="form-group">
@@ -90,7 +152,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-primary" id="saveCreateActivityBtn">保存</button>
             </div>
         </div>
     </div>
@@ -250,7 +312,7 @@
         <div class="btn-toolbar" role="toolbar"
              style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
             <div class="btn-group" style="position: relative; top: 18%;">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal">
+                <button type="button" class="btn btn-primary" id="createActivityBtn">
                     <span class="glyphicon glyphicon-plus"></span> 创建
                 </button>
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span

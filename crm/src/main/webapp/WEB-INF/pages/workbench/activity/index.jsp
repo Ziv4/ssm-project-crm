@@ -24,6 +24,7 @@
         $(function () {
             //给“创建”按钮添加点击事件
             $("#createActivityBtn").click(function () {
+
                 //弹出创建市场活动的模态窗口
                 $("#createActivityModal").modal("show");
             })
@@ -77,6 +78,8 @@
                         if (data.code == "1") {
                             //关闭模态窗口
                             $("#createActivityModal").modal("hide");
+                            //清空表单内容
+                            $("#createActivityForm").get(0).reset()
                             //刷新市场活动列，显示第一页数据，保持每页显示条数不变
                         } else {
                             alert(data.message)
@@ -86,6 +89,16 @@
                 })
 
             })
+
+            $(".myDate").datetimepicker({
+                language: "zh-CN",
+                format: "yyyy-mm-dd",
+                minView: "month",
+                initialDate: new Date(),
+                autoclose: true,
+                todayBtn: true,
+                clearBtn: true,
+            });
         });
 
     </script>
@@ -104,7 +117,7 @@
             </div>
             <div class="modal-body">
 
-                <form class="form-horizontal" role="form">
+                <form id="createActivityForm" class="form-horizontal" role="form">
 
                     <div class="form-group">
                         <label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span
@@ -126,11 +139,11 @@
                     <div class="form-group">
                         <label for="create-startDate" class="col-sm-2 control-label">开始日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-startDate">
+                            <input type="text" class="form-control myDate" readonly id="create-startDate">
                         </div>
                         <label for="create-endDate" class="col-sm-2 control-label">结束日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-endDate">
+                            <input type="text" class="form-control myDate" readonly id="create-endDate">
                         </div>
                     </div>
                     <div class="form-group">

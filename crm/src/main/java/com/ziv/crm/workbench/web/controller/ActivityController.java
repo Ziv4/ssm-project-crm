@@ -80,7 +80,7 @@ public class ActivityController {
         Map<String, Object> retMap = new HashMap<>();
         retMap.put("activityList", activityList);
         retMap.put("totalRows", totalRows);
-        return null;
+        return retMap;
     }
 
 }

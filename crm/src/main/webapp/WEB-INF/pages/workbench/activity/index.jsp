@@ -37,7 +37,7 @@
                 var startDate = $("#create-startDate").val();
                 var endDate = $("#create-endDate").val();
                 var cost = $.trim($("#create-cost").val());
-                var describe = $.trim($("#create-describe").val());
+                var description = $.trim($("#create-describe").val());
                 //表单验证
                 if (owner == "") {
                     alert("所有者不能为空！");
@@ -70,7 +70,7 @@
                         startDate,
                         endDate,
                         cost,
-                        describe
+                        description
                     },
                     type: "post",
                     dataType: "json",
@@ -101,6 +101,15 @@
             });
 
             //当前市场活动主页面加载完成，查询所有数据的第一页以及所有数据的总条数
+            queryActivityByConditionForPage();
+
+            //给“查询”按钮加单击事件
+            $("#queryActivityBtn").click(function () {
+                queryActivityByConditionForPage();
+            })
+        });
+
+        function queryActivityByConditionForPage() {
             //收集参数
             var name = $("#query-name").val();
             var owner = $("#query-owner").val();
@@ -129,8 +138,8 @@
                     $.each(data.activityList,function (index, obj) {
                         htmlStr+='<tr class="active">';
                         htmlStr+='<td><input type="checkbox" value="'+obj.id+'"/></td>';
-                        htmlStr+='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">发传单</a></td>';
-                        htmlStr+='<td>'+obj.name+'</td>';
+                        htmlStr+='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">'+obj.name+'</a></td>';
+                        htmlStr+='<td>'+obj.owner+'</td>';
                         htmlStr+='<td>'+obj.startDate+'</td>';
                         htmlStr+='<td>'+obj.endDate+'</td>';
                         htmlStr+='</tr>';
@@ -138,7 +147,7 @@
                     $("#tBody").html(htmlStr);
                 }
             })
-        });
+        }
 
     </script>
 </head>
@@ -357,7 +366,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-default">查询</button>
+                <button type="button" class="btn btn-default" id="queryActivityBtn">查询</button>
 
             </form>
         </div>

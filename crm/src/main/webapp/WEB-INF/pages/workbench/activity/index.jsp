@@ -11,6 +11,7 @@
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
     <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
           rel="stylesheet"/>
+    <link href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css"/>
 
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
@@ -18,6 +19,9 @@
             src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript"
             src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript"
+            src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+    <script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
     <script type="text/javascript">
 
@@ -101,22 +105,22 @@
             });
 
             //当前市场活动主页面加载完成，查询所有数据的第一页以及所有数据的总条数
-            queryActivityByConditionForPage();
+            queryActivityByConditionForPage(1,10);
 
             //给“查询”按钮加单击事件
             $("#queryActivityBtn").click(function () {
-                queryActivityByConditionForPage();
+                queryActivityByConditionForPage(1,$("#demo_pag1").bs_pagination('getOption','rowsPerPage'));
             })
         });
 
-        function queryActivityByConditionForPage() {
+        function queryActivityByConditionForPage(pageNo,pageSize) {
             //收集参数
             var name = $("#query-name").val();
             var owner = $("#query-owner").val();
             var startDate = $("#query-startDate").val();
             var endDate = $("#query-endDate").val();
-            var pageNo = 1;
-            var pageSize = 10;
+            // var pageNo = 1;
+            // var pageSize = 10;
             //发送请求
             $.ajax({
                 url: 'workbench/activity/queryActivityByConditionForPage.do',
@@ -145,6 +149,25 @@
                         htmlStr+='</tr>';
                     });
                     $("#tBody").html(htmlStr);
+
+                    //计算总页数
+                    var totalPages = 1;
+                    if (data.totalRows % pageSize == 0) {
+                        totalPages = data.totalRows / pageSize;
+                    } else {
+                        totalPages = parseInt(data.totalRows / pageSize)+ 1;
+                    }
+                    //调用bs_pagination工具函数，显示翻页信息
+                    $("#demo_pag1").bs_pagination({
+                        currentPage:pageNo,
+                        rowsPerPage:pageSize,
+                        totalRows:data.totalRows,
+                        totalPages:totalPages,
+                        visiblePageLinks: 5,
+                        onChangePage:function (event, pageObj) {
+                            queryActivityByConditionForPage(pageObj.currentPage,pageObj.rowsPerPage)
+                        }
+                    });
                 }
             })
         }
@@ -424,7 +447,9 @@
                 </tbody>
             </table>
         </div>
+        <div id="demo_pag1"></div>
 
+<%--
         <div style="height: 50px; position: relative;top: 30px;">
             <div>
                 <button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalRows">50</b>条记录</button>
@@ -459,6 +484,7 @@
                 </nav>
             </div>
         </div>
+--%>
 
     </div>
 
